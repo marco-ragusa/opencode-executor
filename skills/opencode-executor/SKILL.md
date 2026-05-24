@@ -52,7 +52,7 @@ Execute these steps in order for every implementation task:
 
 1. **Understand the request.** Restate the goal in one sentence. If you can't, ask the user.
 2. **Inspect the repository directly.** Read the target files, surrounding functions/classes, imports/types, existing tests, related implementations. Identify project conventions and existing validation commands.
-3. **Capture the baseline.** Before invoking OpenCode, snapshot the worktree:
+3. **Capture the baseline.** Run this block unconditionally at the start of every new task, even if `baseline.txt` already exists from a previous task in this session. The file is always overwritten with the current HEAD SHA. The only exception is a corrective iteration on the current task — in that case, skip to Step 4 and reuse the existing baseline.
 
    ```bash
    git --version >/dev/null 2>&1 || { echo "ERROR: git is required." >&2; exit 1; }
@@ -82,6 +82,8 @@ Execute these steps in order for every implementation task:
    ```
 
    Replace `YYYYMMDD-<slug>` with the exact filename written in Step 4. The `&&` guard aborts with a visible `cat` error if the file is not found, preventing OpenCode from receiving an empty prompt.
+
+   Do not use `opencode run "$(cat ...)"` — a `cat` failure inside the subshell produces an empty string that is silently passed to OpenCode as the prompt. The `TASK=` assignment with `&&` is the only permitted form.
 
 6. **Review what OpenCode actually changed**, not what it claims to have changed:
 
